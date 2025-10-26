@@ -23,11 +23,16 @@ if(prog_gcov AND prog_lcov)
     message(STATUS "gcov found: ${prog_gcov}")
     message(STATUS "lcov found: ${prog_lcov}")
 
+    add_custom_target(collect_coverage_init
+        COMMAND ${prog_lcov} -i -c -d . -o base.info --branch-coverage
+        VERBATIM
+    )
     add_custom_target(collect_coverage
         COMMAND ${prog_gcov} main.cpp.o -b -o CMakeFiles/hello.dir/src # hello を実行した時のカバレッジ
         COMMAND ${prog_gcov} func.cpp.o -b -o CMakeFiles/tests.dir/src # tests を実行した時のカバレッジ
         COMMAND ${prog_gcov} test.cpp.o -b -o CMakeFiles/tests.dir/tests # tests を実行した時のカバレッジ
-        COMMAND ${prog_lcov} -c -d . -o coverage.info --branch-coverage --exclude "/usr/*"
+        COMMAND ${prog_lcov} -c -d . -o test.info --branch-coverage
+        COMMAND ${prog_lcov} -a base.info -a test.info -o coverage.info --branch-coverage --exclude "/usr/*"
         VERBATIM
     )
 else()

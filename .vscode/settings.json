@@ -7,5 +7,6 @@
         "gcov",
         "Wextra",
         "Wpedantic"
-    ]
+    ],
+    "cmake.preRunCoverageTarget": "collect_coverage_init"
 }
