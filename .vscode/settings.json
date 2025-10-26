@@ -1,0 +1,11 @@
+{
+    "cmake.postRunCoverageTarget": "collect_coverage",
+    "cmake.coverageInfoFiles": [
+        "${workspaceFolder}/build/coverage.info"
+    ],
+    "cSpell.words": [
+        "gcov",
+        "Wextra",
+        "Wpedantic"
+    ]
+}
