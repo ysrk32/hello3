@@ -16,43 +16,46 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     )
 endif()
 
-add_executable(hello src/main.cpp src/func.cpp)
+find_package(CLI11 CONFIG REQUIRED)
+
+add_executable(hello src/main.cpp src/func.cpp src/sys_wrap.cpp)
 
 target_link_libraries(hello PRIVATE hello_compiler_flags)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     find_program(lcov lcov)
+    find_program(genhtml genhtml)
 
-    if(lcov)
+    if(lcov AND genhtml)
         message(STATUS "lcov found: ${lcov}")
+        message(STATUS "genhtml found: ${genhtml}")
 
         add_custom_target(collect_coverage_init
-            COMMAND ${lcov} -c -i -d . -o base.info --branch-coverage
+            COMMAND ${lcov} -c -i -d . -o base.info --branch-coverage --exclude "/usr/*"
             VERBATIM
         )
         add_custom_target(collect_coverage
-            COMMAND ${lcov} -c -d . -o test.info --branch-coverage
-            COMMAND ${lcov} -a base.info -a test.info -o coverage.info --branch-coverage --exclude "/usr/*"
+            COMMAND ${lcov} -c -d . -o test.info --branch-coverage --exclude "/usr/*"
+            COMMAND ${lcov} -a base.info -a test.info -o all.info --branch-coverage
+            COMMAND ${lcov} -r all.info "*/src/main.cpp" "*/src/sys_wrap.cpp" -o coverage.info --branch-coverage
+            COMMAND ${genhtml} coverage.info -o html --branch-coverage
             VERBATIM
         )
     else()
-        message(WARNING "lcov not found, coverage target will not be available")
+        message(WARNING "lcov or genhtml not found, coverage target will not be available")
     endif()
-endif()
 
-enable_testing()
+    enable_testing()
 
-add_test(NAME Runs COMMAND hello)
-
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     find_package(Catch2 3 REQUIRED)
     find_path(TROMPELOEIL trompeloeil.hpp)
     if(NOT TROMPELOEIL)
         message(FATAL_ERROR "Trompeloeil not found, tests will not be built")
     endif()
 
-    add_executable(tests tests/test.cpp src/func.cpp)
+    add_executable(tests tests/test.cpp src/func.cpp tests/sys_wrap.cpp)
     target_include_directories(tests PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src")
     target_link_libraries(tests PRIVATE hello_compiler_flags Catch2::Catch2WithMain)
+    
     add_test(NAME UnitTests COMMAND tests)
 endif()
