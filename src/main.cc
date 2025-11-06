@@ -2,7 +2,11 @@
 #include <iostream>
 #include <string>
 
-#include "func.hpp"
+#include "func.h"
+#include "posix_api.h"
+
+RealPosixApi real_posix_api;
+PosixApi* g_posix_api = &real_posix_api;
 
 int main(int argc, char* argv[]) {
   CLI::App app{"Factorial Calculator"};

@@ -1,8 +1,8 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/trompeloeil.hpp>
 
-#include "func.hpp"
-#include "mock_sys_wrap.hpp"
+#include "func.h"
+#include "mock_posix_api.h"
 
 TEST_CASE("Factorials are computed", "[factorial]") {
   REQUIRE(Factorial(1) == 1);
@@ -11,10 +11,14 @@ TEST_CASE("Factorials are computed", "[factorial]") {
   REQUIRE(Factorial(10) == 3628800);
 }
 
+PosixApi* g_posix_api;
+
 TEST_CASE("DummyFunction opens file correctly") {
-  REQUIRE_CALL(syscall_mock,
-               wrap_open_impl(trompeloeil::eq(std::string("test_input")),
-                              O_RDONLY, trompeloeil::_))
+  MockPosixApi mock_posix_api;
+  g_posix_api = &mock_posix_api;
+
+  REQUIRE_CALL(mock_posix_api,
+               open(trompeloeil::eq(std::string("test_input")), O_RDONLY))
       .RETURN(42);
 
   REQUIRE(DummyFunction("test_input") == 42);

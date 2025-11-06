@@ -18,7 +18,7 @@ endif()
 
 find_package(CLI11 CONFIG REQUIRED)
 
-add_executable(hello src/main.cpp src/func.cpp src/sys_wrap.cpp)
+add_executable(hello src/main.cc src/func.cc)
 
 target_link_libraries(hello PRIVATE hello_compiler_flags)
 
@@ -37,7 +37,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
         add_custom_target(collect_coverage
             COMMAND ${lcov} -c -d . -o test.info --branch-coverage --exclude "/usr/*"
             COMMAND ${lcov} -a base.info -a test.info -o all.info --branch-coverage
-            COMMAND ${lcov} -r all.info "*/src/main.cpp" "*/src/sys_wrap.cpp" -o coverage.info --branch-coverage
+            COMMAND ${lcov} -r all.info "*/src/main.cc" -o coverage.info --branch-coverage
             COMMAND ${genhtml} coverage.info -o html --branch-coverage
             VERBATIM
         )
@@ -53,7 +53,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
         message(FATAL_ERROR "Trompeloeil not found, tests will not be built")
     endif()
 
-    add_executable(tests tests/test.cpp src/func.cpp tests/sys_wrap.cpp)
+    add_executable(tests tests/test.cc src/func.cc)
     target_include_directories(tests PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src")
     target_link_libraries(tests PRIVATE hello_compiler_flags Catch2::Catch2WithMain)
     

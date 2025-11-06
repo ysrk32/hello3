@@ -1,14 +1,11 @@
-#include "func.hpp"
+#include "func.h"
 
-#include <fcntl.h>
-
-#include "sys_wrap.hpp"
+#include "posix_api.h"
 
 unsigned Factorial(unsigned number) {
   return number <= 1 ? number : Factorial(number - 1) * number;
 }
 
 int DummyFunction(const std::string& input) {
-  int fd = wrap_open(input.c_str(), O_RDONLY);
-  return fd;
+  return g_posix_api->open(input.c_str(), O_RDONLY);
 }
