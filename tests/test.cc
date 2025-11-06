@@ -11,8 +11,6 @@ TEST_CASE("Factorials are computed", "[factorial]") {
   REQUIRE(Factorial(10) == 3628800);
 }
 
-PosixApi* g_posix_api;
-
 TEST_CASE("DummyFunction opens file correctly") {
   MockPosixApi mock_posix_api;
   g_posix_api = &mock_posix_api;

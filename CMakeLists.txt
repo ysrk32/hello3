@@ -53,7 +53,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
         message(FATAL_ERROR "Trompeloeil not found, tests will not be built")
     endif()
 
-    add_executable(tests tests/test.cc src/func.cc)
+    add_executable(tests tests/main.cc tests/test.cc src/func.cc)
     target_include_directories(tests PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src")
     target_link_libraries(tests PRIVATE hello_compiler_flags Catch2::Catch2WithMain)
     
